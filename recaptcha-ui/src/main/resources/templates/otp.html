@@ -9,7 +9,7 @@
 <body>
 <div style="margin: 0 300px">
     <h1>OTP Login</h1>
-    <p>We has been sent a OTP code to your email. Please enter OTP code to verify</p>
+    <p th:if="${param.error == null}">We has been sent a OTP code to your email. Please enter OTP code to verify</p>
     <p style="color:#EF3B3A" id="message" th:if="${param.error}" th:text="${param.error}"></p>
     <form th:action="@{/otp-verify}" th:object="${otpLoginForm}" method="POST">
         <input type="hidden" th:field="*{email}">

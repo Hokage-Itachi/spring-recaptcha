@@ -63,7 +63,7 @@ public class BaseController {
                 return "redirect:/success";
             }
         } catch (HttpStatusCodeException e) {
-            if (e.getStatusCode().value() == 500){
+            if (e.getStatusCode().value() == 500) {
                 return "500";
             }
             System.out.println(e.getMessage());
@@ -95,7 +95,8 @@ public class BaseController {
                 return "redirect:/login?error=" + error;
             }
             loginFailedCount.put(email, loginFailedNumber + 1);
-            return "redirect:/otp-login?email=" + otpLoginRequest.getEmail() + "&error=OTP invalid";
+            String errorMessage = "OTP invalid. We have sent new OTP to your mail. Please try again.";
+            return "redirect:/otp-login?email=" + otpLoginRequest.getEmail() + "&error=" + errorMessage;
         }
         return "redirect:/success";
     }

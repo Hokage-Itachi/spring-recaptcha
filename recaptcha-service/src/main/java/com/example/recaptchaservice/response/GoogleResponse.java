@@ -22,12 +22,12 @@ public class GoogleResponse {
 
     @Override
     public String toString() {
-        return "GoogleResponse{" +
-                "success=" + success +
-                ", hostname='" + hostname + '\'' +
-                ", action='" + action + '\'' +
-                ", score=" + score +
-                ", challenge_ts='" + challenge_ts + '\'' +
-                '}';
+        return "GoogleResponse\n{" +
+                "\tsuccess=" + success +
+                ", \n\thostname='" + hostname +
+                ", \n\taction='" + action +
+                ", \n\tscore=" + score +
+                ", \n\tchallenge_ts='" + challenge_ts +
+                "\n}";
     }
 }

@@ -31,6 +31,7 @@ public class RecaptchaService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         RestTemplate restTemplate = new RestTemplate();
         GoogleResponse googleResponse = restTemplate.postForObject(recaptchaSever, request, GoogleResponse.class);
+        System.out.println(googleResponse);
         if (googleResponse.getScore() == null || googleResponse.getScore() < threshold) {
             return RecaptchaUtils.createResponseData("not human", googleResponse.getErrorCodes(), "400");
         }
