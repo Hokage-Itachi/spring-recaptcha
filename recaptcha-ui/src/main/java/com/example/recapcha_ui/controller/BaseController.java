@@ -2,22 +2,16 @@ package com.example.recapcha_ui.controller;
 
 import com.example.recapcha_ui.request.OTPLoginRequest;
 import com.example.recapcha_ui.response.VerifyResponse;
-import com.example.recapcha_ui.service.MailService;
-import com.example.recapcha_ui.service.RecaptchaV3Service;
 import com.example.recapcha_ui.utils.ControllerUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,15 +21,11 @@ import java.util.Map;
 
 @Controller
 public class BaseController {
-    private final RecaptchaV3Service recaptchaV3Service;
-    private final MailService mailService;
     private String severURL = "http://localhost:8081";
     private RestTemplate restTemplate;
     private Map<String, Integer> loginFailedCount;
 
-    public BaseController(RecaptchaV3Service recaptchaV3Service, MailService mailService) {
-        this.recaptchaV3Service = recaptchaV3Service;
-        this.mailService = mailService;
+    public BaseController() {
         this.loginFailedCount = new HashMap<>();
         this.restTemplate = new RestTemplate();
     }
