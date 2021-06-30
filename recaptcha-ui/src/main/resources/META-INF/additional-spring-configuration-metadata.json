@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "recaptcha.secret",
+      "type": "java.lang.String",
+      "description": "Description for recaptcha.secret."
+    },
+    {
+      "name": "recaptcha.severURL",
+      "type": "java.lang.String",
+      "description": "Description for recaptcha.severURL."
+    },
+    {
+      "name": "recaptcha.threshold",
+      "type": "java.lang.String",
+      "description": "Description for recaptcha.threshold."
+    },
+    {
+      "name": "host-email",
+      "type": "java.lang.String",
+      "description": "Description for host-email."
+    },
+    {
+      "name": "host-email-password",
+      "type": "java.lang.String",
+      "description": "Description for host-email-password."
+    }
+  ] }
