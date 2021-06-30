@@ -63,6 +63,9 @@ public class BaseController {
                 return "redirect:/success";
             }
         } catch (HttpStatusCodeException e) {
+            if (e.getStatusCode().value() == 500){
+                return "500";
+            }
             System.out.println(e.getMessage());
         }
         return "redirect:/otp-login?email=" + userEmail;
