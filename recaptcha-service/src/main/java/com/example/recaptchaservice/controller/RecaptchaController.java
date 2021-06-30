@@ -45,7 +45,8 @@ public class RecaptchaController {
     public ResponseEntity<Object> otpVerify(@RequestBody OTPVerifyRequest request) {
         String email = request.getEmail();
         String otp = request.getOtp();
-        if (otp.equals(pendingVerifyMails.get(email))) {
+        String savedOTP = pendingVerifyMails.get(email);
+        if (otp.equals(savedOTP)) {
             pendingVerifyMails.remove(email);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
