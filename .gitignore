@@ -1,0 +1,12 @@
+/recaptcha-ui/HELP.md
+
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+/recaptcha-service/HELP.md
+/recaptcha-service/target/
+**/.idea/
+*.iws
+*.iml
+*.ipr
