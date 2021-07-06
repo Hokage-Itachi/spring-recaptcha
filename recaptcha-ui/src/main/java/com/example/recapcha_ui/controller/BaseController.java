@@ -21,12 +21,10 @@ import java.util.Map;
 
 @Controller
 public class BaseController {
-    private String severURL = "http://localhost:8081";
+    private String severURL = "http://localhost:8081/api";
     private RestTemplate restTemplate;
-    private Map<String, Integer> loginFailedCount;
 
     public BaseController() {
-        this.loginFailedCount = new HashMap<>();
         this.restTemplate = new RestTemplate();
     }
 
@@ -40,66 +38,60 @@ public class BaseController {
         return "login";
     }
 
-    @GetMapping("/otp-login")
-    public String otpLogin(Model model, @RequestParam("email") String email) {
-        model.addAttribute("otpLoginForm", new OTPLoginRequest(email, ""));
+    @GetMapping("/register")
+    public String otpLogin() {
         return "otp";
     }
 
     @PostMapping("/verify")
     public String login(HttpServletRequest request) {
         String recaptchaResponse = request.getParameter("g-recaptcha-response");
-        String userEmail = request.getParameter("email");
-        String password = request.getParameter("password");
-        Map<String, String> data = ControllerUtils.createRequestData(userEmail, password, recaptchaResponse);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Recaptcha", recaptchaResponse);
 
-        HttpEntity<Map<String, String>> verifyRequest = new HttpEntity<>(data, headers);
+        HttpEntity<Map<String, String>> verifyRequest = new HttpEntity<>(null, headers);
         try {
-            VerifyResponse response = restTemplate.postForObject(severURL + "/form-verify", verifyRequest, VerifyResponse.class);
+            String response = restTemplate.postForObject(severURL + "/form-verify", verifyRequest, String.class);
             System.out.println(response);
-            if (response.getStatus().equals("200")) {
-                return "redirect:/success";
-            }
+
+            return "redirect:/success";
+
         } catch (HttpStatusCodeException e) {
             if (e.getStatusCode().value() == 500) {
                 return "500";
+            } else if (e.getStatusCode().value() == 400){
+                return "400";
             }
             System.out.println(e.getMessage());
         }
-        return "redirect:/otp-login?email=" + userEmail;
+        return "redirect:/otp-login";
     }
-
-    @PostMapping("/otp-verify")
-    public String otpVerify(@ModelAttribute("otpLoginForm") OTPLoginRequest otpLoginRequest, HttpServletRequest request) {
+    @PostMapping("/register")
+    public String register(HttpServletRequest request) {
+        String recaptchaResponse = request.getParameter("g-recaptcha-response");
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Recaptcha", recaptchaResponse);
 
-        Map<String, String> requestData = new HashMap<>();
-        requestData.put("email", otpLoginRequest.getEmail());
-        requestData.put("otp", otpLoginRequest.getOtp());
-        HttpEntity<Map<String, String>> otpVerifyRequest = new HttpEntity<>(requestData, headers);
-
+        HttpEntity<Map<String, String>> verifyRequest = new HttpEntity<>(null, headers);
         try {
-            String response = restTemplate.postForObject(severURL + "/otp-verify", otpVerifyRequest, String.class);
+            String response = restTemplate.postForObject(severURL + "/register", verifyRequest, String.class);
+            System.out.println(response);
+
+            return "redirect:/success";
+
         } catch (HttpStatusCodeException e) {
+            if (e.getStatusCode().value() == 500) {
+                return "500";
+            } else if (e.getStatusCode().value() == 400){
+                return "400";
+            }
             System.out.println(e.getMessage());
-            String email = otpLoginRequest.getEmail();
-            Integer loginFailedNumber = loginFailedCount.get(email);
-            if (loginFailedNumber == null) {
-                loginFailedNumber = 1;
-            }
-            if (loginFailedNumber > 3) {
-                String error = "Login failed more than 3 times. Please try again in a few minutes";
-                return "redirect:/login?error=" + error;
-            }
-            loginFailedCount.put(email, loginFailedNumber + 1);
-            String errorMessage = "OTP invalid. We have sent new OTP to your mail. Please try again.";
-            return "redirect:/otp-login?email=" + otpLoginRequest.getEmail() + "&error=" + errorMessage;
         }
-        return "redirect:/success";
+        return "redirect:/";
     }
+
 
     @GetMapping("/success")
     public String success() {
