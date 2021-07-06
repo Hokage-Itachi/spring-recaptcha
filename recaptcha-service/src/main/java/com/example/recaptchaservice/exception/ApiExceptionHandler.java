@@ -12,4 +12,9 @@ public class ApiExceptionHandler {
     public ResponseEntity<Object> handleException(Exception e, WebRequest request) {
         return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException e, WebRequest request) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
