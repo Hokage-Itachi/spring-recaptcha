@@ -24,10 +24,10 @@ public class GoogleResponse {
     public String toString() {
         return "GoogleResponse\n{" +
                 "\tsuccess=" + success +
-                ", \n\thostname='" + hostname +
-                ", \n\taction='" + action +
+                ", \n\thostname=" + hostname +
+                ", \n\taction=" + action +
                 ", \n\tscore=" + score +
-                ", \n\tchallenge_ts='" + challenge_ts +
+                ", \n\tchallenge_ts=" + challenge_ts +
                 "\n}";
     }
 }

@@ -1,8 +1,6 @@
 package com.example.recaptchaservice.service;
 
 import com.example.recaptchaservice.response.GoogleResponse;
-import com.example.recaptchaservice.response.VerifyResponse;
-import com.example.recaptchaservice.utils.RecaptchaUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +19,7 @@ public class RecaptchaService {
     @Value("${recaptcha.threshold}")
     private Float threshold;
 
-    public VerifyResponse verify(String recaptchaResponse) {
+    public boolean verify(String recaptchaResponse, Float threshold, String action) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -31,10 +29,16 @@ public class RecaptchaService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         RestTemplate restTemplate = new RestTemplate();
         GoogleResponse googleResponse = restTemplate.postForObject(recaptchaSever, request, GoogleResponse.class);
-        System.out.println(googleResponse);
-        if (googleResponse.getScore() == null || googleResponse.getScore() < threshold) {
-            return RecaptchaUtils.createResponseData("not human", googleResponse.getErrorCodes(), "400");
+        if (googleResponse == null) {
+            return false;
         }
-        return RecaptchaUtils.createResponseData("is human", null, "200");
+        System.out.println(googleResponse);
+        if (!googleResponse.getAction().equals(action)) {
+            return false;
+        }
+        if (threshold == 0f) {
+            return googleResponse.getScore() > this.threshold;
+        }
+        return googleResponse.getScore() > threshold;
     }
 }

@@ -1,59 +1,34 @@
 package com.example.recaptchaservice.controller;
 
-import com.example.recaptchaservice.request.FormRequest;
-import com.example.recaptchaservice.request.OTPVerifyRequest;
-import com.example.recaptchaservice.response.VerifyResponse;
-import com.example.recaptchaservice.service.MailService;
+import com.example.recaptchaservice.annotation.VerifyRecaptcha;
 import com.example.recaptchaservice.service.RecaptchaService;
-import com.example.recaptchaservice.utils.RecaptchaUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 public class RecaptchaController {
-    private final RecaptchaService recaptchaService;
-    private final MailService mailService;
-    private Map<String, String> pendingVerifyMails;
+    @Autowired
+    private RecaptchaService recaptchaService;
 
-    public RecaptchaController(RecaptchaService recaptchaService, MailService mailService) {
-        this.recaptchaService = recaptchaService;
-        this.mailService = mailService;
-        this.pendingVerifyMails = new HashMap<>();
+    @PostMapping("/api/login")
+    @VerifyRecaptcha(
+            action = "login",
+            threshold = 0.5f
+    )
+    public ResponseEntity<Object> formVerify() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/form-verify")
-    public ResponseEntity<Object> formVerify(@RequestBody FormRequest request) {
-        String recaptchaResponse = request.getGoogleRecaptchaResponse();
-        VerifyResponse verifyResponse = recaptchaService.verify(recaptchaResponse);
-        if (verifyResponse.getStatus().equals("200")) {
-            return new ResponseEntity<>(verifyResponse, HttpStatus.OK);
-        }
-        String email = request.getEmail();
-        String otp = RecaptchaUtils.createOTP();
-        pendingVerifyMails.put(email, otp);
-        mailService.sendMail(email, otp);
-        return new ResponseEntity<>(verifyResponse, HttpStatus.BAD_REQUEST);
+    @PostMapping("/api/register")
+    @VerifyRecaptcha(
+            action = "register"
+    )
+    public ResponseEntity<Object> register() {
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/otp-verify")
-    public ResponseEntity<Object> otpVerify(@RequestBody OTPVerifyRequest request) {
-        String email = request.getEmail();
-        String otp = request.getOtp();
-        String savedOTP = pendingVerifyMails.get(email);
-        if (otp.equals(savedOTP)) {
-            pendingVerifyMails.remove(email);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            String newOTP = RecaptchaUtils.createOTP();
-            pendingVerifyMails.put(email, newOTP);
-            mailService.sendMail(email, newOTP);
-            return new ResponseEntity<>("OTP invalid", HttpStatus.BAD_REQUEST);
-        }
-    }
 }
