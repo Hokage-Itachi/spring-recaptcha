@@ -1,28 +1,18 @@
 {
   "properties": [
     {
-      "name": "recaptcha.secret",
+      "name": "recaptcha.v3.secret",
       "type": "java.lang.String",
-      "description": "Description for recaptcha.secret."
+      "description": "Description for recaptcha.v3.secret."
     },
     {
-      "name": "recaptcha.severURL",
+      "name": "recaptcha.v2.secret",
       "type": "java.lang.String",
-      "description": "Description for recaptcha.severURL."
+      "description": "Description for recaptcha.v2.secret."
     },
     {
-      "name": "recaptcha.threshold",
+      "name": "recaptcha.v3.threshold",
       "type": "java.lang.String",
-      "description": "Description for recaptcha.threshold."
-    },
-    {
-      "name": "host-email",
-      "type": "java.lang.String",
-      "description": "Description for host-email."
-    },
-    {
-      "name": "host-email-password",
-      "type": "java.lang.String",
-      "description": "Description for host-email-password."
+      "description": "Description for recaptcha.v3.threshold."
     }
   ] }

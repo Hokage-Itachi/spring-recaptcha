@@ -40,7 +40,7 @@ public class BaseController {
 
     @GetMapping("/register")
     public String otpLogin() {
-        return "otp";
+        return "loginV2";
     }
 
     @PostMapping("/verify")

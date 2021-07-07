@@ -12,23 +12,18 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class RecaptchaService {
-    @Value("${recaptcha.secret}")
-    private String recaptchaSecret;
+    @Value("${recaptcha.v3.secret}")
+    private String recaptchaV3Secret;
+    @Value("${recaptcha.v2.secret}")
+    private String recaptchaV2Secret;
     @Value("${recaptcha.severURL}")
     private String recaptchaSever;
-    @Value("${recaptcha.threshold}")
+    @Value("${recaptcha.v3.threshold}")
     private Float threshold;
 
-    public boolean verify(String recaptchaResponse, Float threshold, String action) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    public boolean verifyV3(String recaptchaResponse, Float threshold, String action) {
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("secret", recaptchaSecret);
-        map.add("response", recaptchaResponse);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        GoogleResponse googleResponse = restTemplate.postForObject(recaptchaSever, request, GoogleResponse.class);
+        GoogleResponse googleResponse = sendRequest(recaptchaResponse, recaptchaV3Secret);
         if (googleResponse == null) {
             return false;
         }
@@ -41,4 +36,27 @@ public class RecaptchaService {
         }
         return googleResponse.getScore() > threshold;
     }
+
+    public boolean verifyV2(String recaptchaResponse) {
+        GoogleResponse googleResponse = sendRequest(recaptchaResponse, recaptchaV2Secret);
+        System.out.println(googleResponse);
+        if (googleResponse == null) {
+            return false;
+        }
+        return googleResponse.isSuccess();
+    }
+
+    private GoogleResponse sendRequest(String recaptchaResponse, String recaptchaSecret) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("secret", recaptchaSecret);
+        map.add("response", recaptchaResponse);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.postForObject(recaptchaSever, request, GoogleResponse.class);
+    }
+
+
 }

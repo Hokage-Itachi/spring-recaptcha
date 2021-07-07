@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-public @interface VerifyRecaptcha {
+public @interface VerifyRecaptchaV3 {
     String action();
 
     float threshold() default 0f;
